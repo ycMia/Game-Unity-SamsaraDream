@@ -1,20 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Gamemanager : MonoBehaviour
 {
+    public Buttoner[] buttoners;
     public Camera mCCamera; //MainCharacterCamera
     public GameObject mC; //MainCharacter
     private Rigidbody2D mCR2D;
     public int g_jumpEnabledCount = 2;
     public int g_jumpEnabledLimit = 2;
-
-
+    
     public float g_accelerationX;
     public float g_VelocityJump;
     public float g_restrictVelocityXAbs;
     public float g_restrictVelocityYAbs;
+
+    public bool[] g_movementJurisdiction = new bool[4] { true, true, true, true};
+    //0 left,1 right,2 up,3 down
+    public bool g_grounded = false;
 
     // Start is called before the first frame update
     void Start()
@@ -32,30 +37,22 @@ public class Gamemanager : MonoBehaviour
         return false;
     }
 
-    public void SetCharacterSlideAtSide(Rigidbody2D rigidbody2D, int mode) 
-        // 1 : notAllowRightwayMovement
-        // 2 : notAllowLeftwayMovement
-    {
-
-    }
-
-
     // Update is called once per frame
     void Update()
     {
         //Camera
         mCCamera.transform.position = Vector3.Lerp(mCCamera.transform.position, mC.transform.position, 0.1f);
-        mCCamera.transform.position = new Vector3(mCCamera.transform.position.x, mCCamera.transform.position.y,  - 10f);
-        //Movement
-        if (Input.GetKey(KeyCode.A))
+        mCCamera.transform.position = new Vector3(mCCamera.transform.position.x, mCCamera.transform.position.y, -10f);
+        //Movement Control
+        if ((Input.GetKey(KeyCode.A)||buttoners[0].pressed) && (g_grounded || g_movementJurisdiction[0]) == true)
         {
             mCR2D.velocity += new Vector2(-g_accelerationX, 0);
         }
-        else if(Input.GetKey(KeyCode.D))
+        else if((Input.GetKey(KeyCode.D) || buttoners[1].pressed) && (g_grounded || g_movementJurisdiction[1]) == true)
         {
             mCR2D.velocity += new Vector2(g_accelerationX, 0 );
         }
-        if(Input.GetKeyDown(KeyCode.Space))
+        if((Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true)
         {
             if(g_jumpEnabledCount > 0)
             {
@@ -66,7 +63,6 @@ public class Gamemanager : MonoBehaviour
         //Final Fixing
         RestrictMaxSpeed(mCR2D, g_restrictVelocityXAbs, g_restrictVelocityYAbs);
     }
-    
     
 
     void RestrictMaxSpeed(Rigidbody2D rigidbody2D,float restrictXAbs,float restrictYAbs)

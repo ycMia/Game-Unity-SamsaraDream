@@ -10,30 +10,44 @@ public class MainCharacter : MonoBehaviour
     {
         
     }
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if ( collision.transform.gameObject.tag == "Ground" )
         {
+            gm.g_grounded = true;
             if (gm.AddJump() == true)
-            {
                 gm.AddJump();
-            }   
-            else
-            {
-
-            }
             // two times if touched ground
             // and a bit fixing
         }
 
-        else if(collision.transform.gameObject.tag == "Ground_Side_Left")
+        if (collision.transform.gameObject.tag == "Ground_Side_Left")
         {
-            
+            gm.g_movementJurisdiction[1] = false;// right denied
         }
 
-        else if (collision.transform.gameObject.tag == "Ground_Side_Right")
+        if (collision.transform.gameObject.tag == "Ground_Side_Right")
         {
+            gm.g_movementJurisdiction[0] = false;// left denied
+        }
+    }
 
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.transform.gameObject.tag == "Ground")
+        {
+            gm.g_grounded = false;
+        }
+
+        if (collision.transform.gameObject.tag == "Ground_Side_Left")
+        {
+            gm.g_movementJurisdiction[1] = true; //right allowed
+        }
+
+        if (collision.transform.gameObject.tag == "Ground_Side_Right")
+        {
+            gm.g_movementJurisdiction[0] = true; //left allowed
         }
     }
 
