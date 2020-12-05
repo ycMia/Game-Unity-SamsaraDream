@@ -1,31 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class Buttoner : MonoBehaviour
 {
-    Gamemanager gm;
-    public bool pressed = false;
-    // Start is called before the first frame update
-    void Start()
+    public bool pressed;
+
+    void Awake()
     {
-        
+        AddTriggersListener(gameObject, EventTriggerType.PointerDown, MPress);
+        AddTriggersListener(gameObject, EventTriggerType.PointerUp, MUnPress);
     }
 
-    public void My_onClick()
+    public void MPress(BaseEventData bEData)
     {
         pressed = true;
+        //Debug.Log("MyOnPressed Called.");
     }
 
-    public void My_onLeave()
+    public void MUnPress(BaseEventData bEData)
     {
         pressed = false;
+        //Debug.Log("MyLeavingButton Called.");
     }
 
-    // Update is called once per frame
-    void Update()
+    private void AddTriggersListener(GameObject obj, EventTriggerType eventID, UnityAction<BaseEventData> action)
     {
-        
+        EventTrigger trigger = obj.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = obj.AddComponent<EventTrigger>();
+        }
+
+        if (trigger.triggers.Count == 0)
+        {
+            trigger.triggers = new List<EventTrigger.Entry>();
+        }
+
+        UnityAction<BaseEventData> callback = new UnityAction<BaseEventData>(action);
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = eventID;
+        entry.callback.AddListener(callback);
+
+        trigger.triggers.Add(entry);
     }
 }
