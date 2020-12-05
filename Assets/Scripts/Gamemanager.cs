@@ -56,17 +56,17 @@ public class Gamemanager : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.A) && (g_grounded || g_movementJurisdiction[0]) == true)
             {
-                mCR2D.velocity += new Vector2(-g_accelerationX, 0);
+                mCR2D.AddForce(new Vector2(-g_accelerationX, 0),ForceMode2D.Impulse);//mCR2D.velocity += new Vector2(-g_accelerationX, 0);
             }
             else if (Input.GetKey(KeyCode.D) && (g_grounded || g_movementJurisdiction[1]) == true)
             {
-                mCR2D.velocity += new Vector2(g_accelerationX, 0);
+                mCR2D.AddForce(new Vector2(g_accelerationX, 0), ForceMode2D.Impulse); //mCR2D.velocity += new Vector2(g_accelerationX, 0);
             }
             if (Input.GetKeyDown(KeyCode.Space) && g_movementJurisdiction[2] == true)
             {
                 if (g_jumpEnabledCount > 0)
                 {
-                    mCR2D.velocity = new Vector2(mCR2D.velocity.x, g_VelocityJump);
+                    mCR2D.AddForce(new Vector2(0, g_VelocityJump), ForceMode2D.Impulse);//mCR2D.velocity = new Vector2(mCR2D.velocity.x, g_VelocityJump);
                     g_jumpEnabledCount--;
                 }
             }
