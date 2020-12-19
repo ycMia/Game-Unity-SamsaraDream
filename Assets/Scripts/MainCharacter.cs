@@ -22,14 +22,23 @@ public class MainCharacter : MonoBehaviour
             // and a bit fixing
         }
 
-        if (collision.transform.gameObject.tag == "Ground_Side_Left")
+        if (collision.transform.gameObject.tag == "Cliff_Side_Left")
         {
             gm.g_movementJurisdiction[1] = false;// right denied
         }
 
-        if (collision.transform.gameObject.tag == "Ground_Side_Right")
+        if (collision.transform.gameObject.tag == "Cliff_Side_Right")
         {
             gm.g_movementJurisdiction[0] = false;// left denied
+        }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.gameObject.tag == "Interactive_Coin")
+        {
+            collision.gameObject.GetComponent<Interacter>().DeleteSelf();
         }
     }
 
@@ -40,12 +49,12 @@ public class MainCharacter : MonoBehaviour
             gm.g_grounded = false;
         }
 
-        if (collision.transform.gameObject.tag == "Ground_Side_Left")
+        if (collision.transform.gameObject.tag == "Cliff_Side_Left")
         {
             gm.g_movementJurisdiction[1] = true; //right allowed
         }
 
-        if (collision.transform.gameObject.tag == "Ground_Side_Right")
+        if (collision.transform.gameObject.tag == "Cliff_Side_Right")
         {
             gm.g_movementJurisdiction[0] = true; //left allowed
         }

@@ -317,7 +317,7 @@ GameObject:
   - component: {fileID: 7715866041566167435}
   m_Layer: 0
   m_Name: WallRight
-  m_TagString: Ground_Side_Right
+  m_TagString: Cliff_Side_Right
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -426,7 +426,7 @@ GameObject:
   - component: {fileID: 287974422133415137}
   m_Layer: 0
   m_Name: WallLeft
-  m_TagString: Ground_Side_Left
+  m_TagString: Cliff_Side_Left
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
