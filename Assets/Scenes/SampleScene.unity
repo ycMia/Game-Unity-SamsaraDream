@@ -1938,7 +1938,7 @@ MonoBehaviour:
   mC: {fileID: 1956291744}
   score: 0
   textline: {fileID: 1215611410}
-  g_jumpEnabledCount: 2
+  g_jumpEnabledCount: 1
   g_jumpEnabledLimit: 2
   g_accelerationX_origin: 0.5
   g_VelocityJump: 8
