@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Interacter : MonoBehaviour
+public class Interacter_Coin : MonoBehaviour
 {
+    public Gamemanager gm;
+
     private float destroyingRemaining;
     private float originColorAlphaValue;
     public bool onDestroying = false;
-    public float score = 0f;
+    public float score;
     public float destroyRemainTime_Set; //Seconds
     public GameObject tiper;
     
@@ -20,6 +22,7 @@ public class Interacter : MonoBehaviour
     {
         if (onDestroying)
             return;
+        gm.AddScore(score);
         destroyingRemaining = 0f;
         tiper.SetActive(true);
         onDestroying = true;
@@ -44,7 +47,7 @@ public class Interacter : MonoBehaviour
                 tiper.GetComponent<SpriteRenderer>().color.g,
                 tiper.GetComponent<SpriteRenderer>().color.b,
                 tiper.GetComponent<SpriteRenderer>().color.a - step);
-            tiper.transform.position += new Vector3(0f, 0.1f, 0f);
+            tiper.transform.position += new Vector3(0f, 0.01f, 0f);
         }
     }
 }

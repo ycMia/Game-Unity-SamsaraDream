@@ -1,4 +1,19 @@
-﻿using System.Collections;
+﻿//MainCharacter.cs
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,7 +53,7 @@ public class MainCharacter : MonoBehaviour
     {
         if (collision.transform.gameObject.tag == "Interactive_Coin")
         {
-            collision.gameObject.GetComponent<Interacter>().DeleteSelf();
+            collision.gameObject.GetComponent<Interacter_Coin>().DeleteSelf();
         }
     }
 
