@@ -12,7 +12,6 @@
 //
 //
 
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,6 +53,21 @@ public class MainCharacter : MonoBehaviour
         if (collision.transform.gameObject.tag == "Interactive_Coin")
         {
             collision.gameObject.GetComponent<Interacter_Coin>().DeleteSelf();
+        }
+
+        if (collision.transform.gameObject.tag == "Interactive_Bed")
+        {
+            gm.nowInteracting = collision;
+            gm.SwitchKeyMode(false);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.transform.gameObject.tag == "Interactive_Bed")
+        {
+            gm.nowInteracting = null; //[Tip][20201225]这里逻辑绝对有问题
+            gm.SwitchKeyMode(true);
         }
     }
 

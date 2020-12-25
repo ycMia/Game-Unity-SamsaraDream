@@ -15,6 +15,7 @@ public class Gamemanager : MonoBehaviour
     public float score = 0;
     public Text textline;
 
+    public Collider2D nowInteracting;
     public int g_jumpEnabledCount = 2;
     public int g_jumpEnabledLimit = 2;
 
@@ -30,13 +31,21 @@ public class Gamemanager : MonoBehaviour
     public bool[] g_movementJurisdiction = new bool[4] { true, true, true, true};
     //0 left,1 right,2 up,3 down
     public bool g_grounded = false;
-    
+
+    public bool ui_keyMode = true; // true == jump , false == interact
+
     void Start()
     {
         mCR2D = mC.GetComponent<Rigidbody2D>();
         UIContainer.SetActive(g_allowUI);
     }
     
+    public bool SwitchKeyMode(bool tVal)
+    {
+        ui_keyMode = tVal;
+        return true;
+    }
+
     public bool AddJump()
     {
         if ( g_jumpEnabledCount < g_jumpEnabledLimit)
@@ -108,14 +117,22 @@ public class Gamemanager : MonoBehaviour
                 else
                     mCR2D.velocity += new Vector2(g_accelerationX_origin, 0);
             }
-            if((Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true && m_jumpBumper == true)
+            if(ui_keyMode == true &&(Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true && m_jumpBumper == true)
             {
+                //jump
+
                 m_jumpBumper = !m_jumpBumper;
                 if(g_jumpEnabledCount > 0)
                 {
                     mCR2D.velocity = new Vector2(mCR2D.velocity.x , g_VelocityJump);
                     g_jumpEnabledCount--;
                 }
+            }
+            else if(ui_keyMode == false &&(Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) && g_movementJurisdiction[2] == true && m_jumpBumper == true)
+            {
+                //interact
+
+                nowInteracting.gameObject.GetComponent<Interacter_Bed_1>().Interact(); //[Tip][20201225]因为只有Interacter_Bed_1
             }
             if(m_jumpBumper == false && buttoners[4].pressed == false)
             {

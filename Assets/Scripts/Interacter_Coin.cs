@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Interacter_Coin : MonoBehaviour
 {
-    public Gamemanager gm;
+    public Gamemanager gm;  //[Tip][20201225]需要手动挂载...
 
     private float destroyingRemaining;
     private float originColorAlphaValue;
@@ -18,10 +18,10 @@ public class Interacter_Coin : MonoBehaviour
         tiper.SetActive(false); // Warn here
     }
 
-    public void DeleteSelf()
+    public bool DeleteSelf()
     {
         if (onDestroying)
-            return;
+            return false;
         gm.AddScore(score);
         destroyingRemaining = 0f;
         tiper.SetActive(true);
@@ -29,6 +29,7 @@ public class Interacter_Coin : MonoBehaviour
         //gameObject.SetActive(false);
         originColorAlphaValue = tiper.GetComponent<SpriteRenderer>().color.a;
         gameObject.GetComponent<SpriteRenderer>().color = new Color(0f,0f,0f,0f);
+        return true;
     }
     
     void Update()
