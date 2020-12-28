@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using System;
 
 public class Gamemanager : MonoBehaviour
 {
@@ -19,7 +20,22 @@ public class Gamemanager : MonoBehaviour
     public int g_jumpEnabledCount = 2;
     public int g_jumpEnabledLimit = 2;
 
+    public float g_touchGroundsjumpForce;
+    public float tGjF_init;
+
     public float g_accelerationX_origin;
+    
+    private float tGjF_count;
+    public void TouchGroundLittleJump()//落地卡顿修正
+    {
+        if(tGjF_count <= 0)//防止小跳
+        {
+            mCR2D.AddForce(g_touchGroundsjumpForce * Vector2.up,ForceMode2D.Impulse);
+            tGjF_count = tGjF_init;
+        }
+        //throw new NotImplementedException();
+    }
+
     //private float accelerationX_adapted;
 
     public float g_VelocityJump;
@@ -36,6 +52,7 @@ public class Gamemanager : MonoBehaviour
 
     void Start()
     {
+        tGjF_count = tGjF_init;
         mCR2D = mC.GetComponent<Rigidbody2D>();
         UIContainer.SetActive(g_allowUI);
     }
@@ -72,6 +89,8 @@ public class Gamemanager : MonoBehaviour
         {
             textline.text = "Score:" + (int)score;
         }
+
+
         if (!g_allowUI)
         {
             if (Input.GetKey(KeyCode.A) && (g_grounded || g_movementJurisdiction[0]) == true)
@@ -140,5 +159,7 @@ public class Gamemanager : MonoBehaviour
             }
         }
 
+
+        tGjF_count -= Time.deltaTime;
     }
 }

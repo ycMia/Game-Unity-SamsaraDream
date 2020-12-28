@@ -32,6 +32,7 @@ public class MainCharacter : MonoBehaviour
             gm.g_grounded = true;
             if (gm.AddJump() == true)
                 gm.AddJump();
+            gm.TouchGroundLittleJump();
             // two times if touched ground
             // and a bit fixing
         }

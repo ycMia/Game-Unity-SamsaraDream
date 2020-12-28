@@ -2117,6 +2117,8 @@ MonoBehaviour:
   nowInteracting: {fileID: 0}
   g_jumpEnabledCount: 1
   g_jumpEnabledLimit: 2
+  g_touchGroundsjumpForce: 5
+  tGjF_init: 0.3
   g_accelerationX_origin: 0.5
   g_VelocityJump: 8
   g_restrictVelocityXAbs: 7
