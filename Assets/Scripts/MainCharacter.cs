@@ -52,7 +52,7 @@ public class MainCharacter : MonoBehaviour
     {
         if (collision.transform.gameObject.tag == "Interactive_Coin")
         {
-            collision.gameObject.GetComponent<Interacter_Coin>().DeleteSelf();
+            collision.gameObject.transform.GetComponentInParent<Interacter_Coin>().DeleteSelf(int.Parse(collision.gameObject.name));
         }
 
         if (collision.transform.gameObject.tag == "Interactive_Bed")

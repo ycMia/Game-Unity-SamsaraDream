@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3756280934131553026}
   - component: {fileID: 3462121243198787648}
-  - component: {fileID: 4768297092286594457}
   - component: {fileID: 2422524683774673506}
   m_Layer: 0
   m_Name: coin
@@ -85,22 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4768297092286594457
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2279252732803173801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfc3817619a07ef49b8864aca4ad4500, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onDestroying: 0
-  score: 1
-  destroyRemainTime_Set: 2
-  tiper: {fileID: 4993778647326478160}
 --- !u!61 &2422524683774673506
 BoxCollider2D:
   m_ObjectHideFlags: 0

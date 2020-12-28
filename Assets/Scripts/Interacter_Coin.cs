@@ -6,49 +6,71 @@ public class Interacter_Coin : MonoBehaviour
 {
     public Gamemanager gm;  //[Tip][20201225]需要手动挂载...
 
-    private float destroyingRemaining;
-    private float originColorAlphaValue;
-    public bool onDestroying = false;
-    public float score;
+    public GameObject coin_Prefab;
+    private GameObject[] coins;
+    private GameObject[] tipers;
+    public Vector3[] positions;
+    //设置Coin生成细节...
+    //[Tip][20201229]这迟早给我塞进文件里 -- 地图编辑器
+
+    private int childrenCount;
+    private float[] destroyingRemainings;
+    private float[] originColorAlphaValues;
+    private bool[] onDestroying;
+    public float scoreEach;
     public float destroyRemainTime_Set; //Seconds
-    public GameObject tiper;
     
     void Start()
     {
-        tiper.SetActive(false); // Warn here
+        childrenCount = positions.Length;
+
+        coins = new GameObject[childrenCount];
+        tipers= new GameObject[childrenCount];
+
+        onDestroying = new bool[childrenCount];
+        destroyingRemainings = new float[childrenCount];
+        originColorAlphaValues = new float[childrenCount];
+        
+        for(int i=0;i<childrenCount;i++)
+        {
+            onDestroying[i] = false;
+            coins[i] = Instantiate(coin_Prefab, positions[i], new Quaternion() ,gameObject.transform);
+            coins[i].name = i.ToString(); //名字为碰撞作检索
+            tipers[i] = coins[i].transform.GetChild(0).gameObject;
+            tipers[i].SetActive(false);
+        }
     }
 
-    public bool DeleteSelf()
+    public bool DeleteSelf(int i)
     {
-        if (onDestroying)
+        if (onDestroying[i])
             return false;
-        gm.AddScore(score);
-        destroyingRemaining = 0f;
-        tiper.SetActive(true);
-        onDestroying = true;
-        //gameObject.SetActive(false);
-        originColorAlphaValue = tiper.GetComponent<SpriteRenderer>().color.a;
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(0f,0f,0f,0f);
+        gm.AddScore(scoreEach);
+        destroyingRemainings[i] = 0f;
+        tipers[i].SetActive(true);
+        onDestroying[i] = true;
+        originColorAlphaValues[i] = tipers[i].GetComponent<SpriteRenderer>().color.a;
+        coins[i].GetComponent<SpriteRenderer>().color = new Color(0f,0f,0f,0f);
         return true;
     }
     
     void Update()
     {
-        if(onDestroying)
+        for (int i = 0; i < childrenCount; i++)
         {
-            destroyingRemaining += Time.deltaTime;
-            float step = ( Time.deltaTime / destroyRemainTime_Set ) * originColorAlphaValue;
-            if(destroyingRemaining>=destroyRemainTime_Set)
+            if (onDestroying[i])
             {
-                Destroy(tiper);
-                Destroy(gameObject);
+                destroyingRemainings[i] += Time.deltaTime;
+                float step = (Time.deltaTime / destroyRemainTime_Set) * originColorAlphaValues[i];
+                if (destroyingRemainings[i] >= destroyRemainTime_Set)
+                {
+                    Destroy(tipers[i]);
+                    Destroy(coins[i]);
+                    continue;
+                }                
+                tipers[i].GetComponent<SpriteRenderer>().color -= new Color(0f,0f,0f,step);//变得透明点?
+                tipers[i].transform.position += new Vector3(0f, 0.01f, 0f);
             }
-            tiper.GetComponent<SpriteRenderer>().color = new Color(
-                tiper.GetComponent<SpriteRenderer>().color.r,
-                tiper.GetComponent<SpriteRenderer>().color.g,
-                tiper.GetComponent<SpriteRenderer>().color.b,
-                tiper.GetComponent<SpriteRenderer>().color.a - step);
-            tiper.transform.position += new Vector3(0f, 0.01f, 0f);
         }
     }
 }
