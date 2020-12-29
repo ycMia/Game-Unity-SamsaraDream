@@ -4,28 +4,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+//UnityUI事件:https://www.cnblogs.com/llstart-new0201/p/7102868.html
+//官方文档:https://docs.unity3d.com/530/Documentation/ScriptReference/EventSystems.EventTriggerType.html
 public class Buttoner : MonoBehaviour
 {
     public bool pressed;
-
-    void Awake()
-    {
-        AddTriggersListener(gameObject, EventTriggerType.PointerDown, MPress);
-        AddTriggersListener(gameObject, EventTriggerType.PointerUp, MUnPress);
-    }
-
-    public void MPress(BaseEventData bEData)
-    {
-        pressed = true;
-        //Debug.Log("MyOnPressed Called.");
-    }
-
-    public void MUnPress(BaseEventData bEData)
-    {
-        pressed = false;
-        //Debug.Log("MyLeavingButton Called.");
-    }
-
+    
     private void AddTriggersListener(GameObject obj, EventTriggerType eventID, UnityAction<BaseEventData> action)
     {
         EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -46,4 +30,23 @@ public class Buttoner : MonoBehaviour
 
         trigger.triggers.Add(entry);
     }
+
+    void Awake()
+    {
+        AddTriggersListener(gameObject, EventTriggerType.PointerDown, MPress);
+        AddTriggersListener(gameObject, EventTriggerType.PointerUp, MUnPress);
+    }
+
+    public void MPress(BaseEventData bEData)
+    {
+        pressed = true;
+        //Debug.Log("MyOnPressed Called.");
+    }
+
+    public void MUnPress(BaseEventData bEData)
+    {
+        pressed = false;
+        //Debug.Log("MyLeavingButton Called.");
+    }
+
 }
