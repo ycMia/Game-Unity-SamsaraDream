@@ -158,8 +158,17 @@ public class Gamemanager : MonoBehaviour
                 m_jumpBumper = true;
             }
         }
-
-
+        
         tGjF_count -= Time.deltaTime;
+        if(nowInteracting)
+        {
+            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().text = "Interact";
+            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().color = Color.red;
+        }
+        else
+        {
+            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().text = "Jump";
+            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().color = Color.black;
+        }
     }
 }
