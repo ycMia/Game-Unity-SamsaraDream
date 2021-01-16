@@ -32,6 +32,7 @@ public class MainCharacter : MonoBehaviour
             gm.g_grounded = true;
             if (gm.AddJump() == true)
                 gm.AddJump();
+            gm.nowGrounding = collision.gameObject.GetComponent<Collider2D>();
             gm.TouchGroundLittleJump();
             // two times if touched ground
             // and a bit fixing
@@ -53,13 +54,13 @@ public class MainCharacter : MonoBehaviour
     {
         if (collision.transform.gameObject.tag == "Interactive_Coin")
         {
-            collision.gameObject.transform.GetComponentInParent<Interacter_Coin>().DeleteSelf(int.Parse(collision.gameObject.name));
+            collision.gameObject.transform.GetComponentInParent<Coin>().DeleteSelf(int.Parse(collision.gameObject.name));
         }
 
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
             gm.nowInteracting = collision;
-            gm.SwitchKeyMode(false);
+            //gm.SwitchKeyMode(false);
         }
     }
 
@@ -67,8 +68,8 @@ public class MainCharacter : MonoBehaviour
     {
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
-            gm.nowInteracting = null; //[Tip][20201225]这里逻辑绝对有问题
-            gm.SwitchKeyMode(true);
+            gm.nowInteracting = null; //[Tip][20201225]这里逻辑可能有问题
+            //gm.SwitchKeyMode(true);
         }
     }
 

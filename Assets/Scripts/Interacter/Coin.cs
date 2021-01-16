@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Interacter_Coin : MonoBehaviour
+public class Coin : MonoBehaviour
 {
     public Gamemanager gm;  //[Tip][20201225]需要手动挂载...
 

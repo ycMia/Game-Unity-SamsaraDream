@@ -6,12 +6,15 @@ using System;
 
 public class Gamemanager : MonoBehaviour
 {
+    public Canvas g_canvas;
+
     public bool g_allowUI;
     public GameObject UIContainer;
-
+    
     public Buttoner[] buttoners;
     public GameObject mC; //MainCharacter
-    private Rigidbody2D mCR2D;
+    public Rigidbody2D mCR2D;
+    public Collider2D nowGrounding;
 
     public float score = 0;
     public Text textline;
@@ -25,43 +28,37 @@ public class Gamemanager : MonoBehaviour
 
     public float g_accelerationX_origin;
     
-    private float tGjF_count;
-    public void TouchGroundLittleJump()//落地卡顿修正
-    {
-        if(tGjF_count <= 0)//防止小跳
-        {
-            mCR2D.AddForce(g_touchGroundsjumpForce * Vector2.up,ForceMode2D.Impulse);
-            tGjF_count = tGjF_init;
-        }
-        //throw new NotImplementedException();
-    }
-
-    //private float accelerationX_adapted;
-
+    private float tGjF_count; //TouchGroundLittleJump_Count
+    
     public float g_VelocityJump;
-    private bool m_jumpBumper = true;
+    //private bool m_jumpBumper = true;
 
     public float g_restrictVelocityXAbs;
     public float g_restrictVelocityYAbs;
 
     public bool[] g_movementJurisdiction = new bool[4] { true, true, true, true};
-    //0 left,1 right,2 up,3 down
+    /*0 left,1 right,2 up,3 down
+     *true ==  
+     */                                                                    
     public bool g_grounded = false;
 
-    public bool ui_keyMode = true; // true == jump , false == interact
+    //public bool ui_keyMode = true; // true == jump , false == interact //已弃用
+
+    
 
     void Start()
     {
+        //g_canvas.scaleFactor = Math.Min(Screen.height / 1980f, Screen.width / 1080f);
         tGjF_count = tGjF_init;
-        mCR2D = mC.GetComponent<Rigidbody2D>();
+        //mCR2D = mC.GetComponent<Rigidbody2D>();
         UIContainer.SetActive(g_allowUI);
     }
     
-    public bool SwitchKeyMode(bool tVal)
-    {
-        ui_keyMode = tVal;
-        return true;
-    }
+    //public bool SwitchKeyMode(bool tVal)
+    //{
+    //    ui_keyMode = tVal;
+    //    return true;
+    //}
 
     public bool AddJump()
     {
@@ -81,6 +78,8 @@ public class Gamemanager : MonoBehaviour
 
     void Update()
     {
+        tGjF_count -= Time.deltaTime;
+
         if (score>=8)
         {
             textline.text = "Score:" + (int)score + "You Win!!";
@@ -115,9 +114,9 @@ public class Gamemanager : MonoBehaviour
                     g_jumpEnabledCount--;
                 }
             }
-            if (m_jumpBumper == false && buttoners[4].pressed == false)
+            if (Input.GetKeyDown(KeyCode.J) && nowInteracting == true )
             {
-                m_jumpBumper = true;
+                nowInteracting.gameObject.GetComponent<Bed_1>().Interact();
             }
         }
         else
@@ -136,39 +135,31 @@ public class Gamemanager : MonoBehaviour
                 else
                     mCR2D.velocity += new Vector2(g_accelerationX_origin, 0);
             }
-            if(ui_keyMode == true &&(Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true && m_jumpBumper == true)
+            if( (Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true)
             {
                 //jump
-
-                m_jumpBumper = !m_jumpBumper;
                 if(g_jumpEnabledCount > 0)
                 {
                     mCR2D.velocity = new Vector2(mCR2D.velocity.x , g_VelocityJump);
                     g_jumpEnabledCount--;
                 }
             }
-            else if(ui_keyMode == false &&(Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) && g_movementJurisdiction[2] == true && m_jumpBumper == true)
+            else if( (Input.GetKeyDown(KeyCode.J) || buttoners[5].pressed) && nowInteracting == true)
             {
                 //interact
-
-                nowInteracting.gameObject.GetComponent<Interacter_Bed_1>().Interact(); //[Tip][20201225]因为只有Interacter_Bed_1
-            }
-            if(m_jumpBumper == false && buttoners[4].pressed == false)
-            {
-                m_jumpBumper = true;
+                nowInteracting.gameObject.GetComponent<Bed_1>().Interact(); //[Tip][20201225]因为只有Bed_1
             }
         }
-        
-        tGjF_count -= Time.deltaTime;
+
+
         if(nowInteracting)
         {
-            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().text = "Interact";
-            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().color = Color.red;
+            buttoners[5].gameObject.GetComponent<Button>().interactable = true;
         }
         else
         {
-            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().text = "Jump";
-            buttoners[4].gameObject.transform.GetChild(0).GetComponent<Text>().color = Color.black;
+            buttoners[5].gameObject.GetComponent<Button>().interactable = false;
         }
     }
+    
 }
