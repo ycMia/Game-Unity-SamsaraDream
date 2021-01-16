@@ -24,7 +24,7 @@ public class MainCharacter : MonoBehaviour
     {
         
     }
-    
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if ( collision.transform.gameObject.tag == "Ground" )
@@ -63,13 +63,18 @@ public class MainCharacter : MonoBehaviour
             //gm.SwitchKeyMode(false);
         }
     }
-
+    
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
             gm.nowInteracting = null; //[Tip][20201225]这里逻辑可能有问题
             //gm.SwitchKeyMode(true);
+        }
+
+        if (collision.transform.gameObject.tag == "Zone_GameZone")
+        {
+            gm.GameOver();
         }
     }
 

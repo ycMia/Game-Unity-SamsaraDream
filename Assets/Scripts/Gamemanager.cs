@@ -7,6 +7,7 @@ using System;
 public class Gamemanager : MonoBehaviour
 {
     public Canvas g_canvas;
+    public CameraManager cm;
 
     public bool g_allowUI;
     public GameObject UIContainer;
@@ -44,7 +45,8 @@ public class Gamemanager : MonoBehaviour
 
     //public bool ui_keyMode = true; // true == jump , false == interact //已弃用
 
-    
+    private bool priv_jumpLocker = false;
+    //lock == true ; unlock == false
 
     void Start()
     {
@@ -53,12 +55,17 @@ public class Gamemanager : MonoBehaviour
         //mCR2D = mC.GetComponent<Rigidbody2D>();
         UIContainer.SetActive(g_allowUI);
     }
-    
+
     //public bool SwitchKeyMode(bool tVal)
     //{
     //    ui_keyMode = tVal;
     //    return true;
     //}
+
+    public void GameOver()
+    {
+        cm.locked = true;
+    }
 
     public bool AddJump()
     {
@@ -78,6 +85,11 @@ public class Gamemanager : MonoBehaviour
 
     void Update()
     {
+        if(buttoners[4].pressed == false)
+        {
+            priv_jumpLocker = false;
+        }
+
         tGjF_count -= Time.deltaTime;
 
         if (score>=8)
@@ -113,6 +125,7 @@ public class Gamemanager : MonoBehaviour
                     mCR2D.velocity = new Vector2(mCR2D.velocity.x, g_VelocityJump);
                     g_jumpEnabledCount--;
                 }
+                //因为按键的GetKeyDown不会瞬发, 所以没有lock 的必要
             }
             if (Input.GetKeyDown(KeyCode.J) && nowInteracting == true )
             {
@@ -135,13 +148,14 @@ public class Gamemanager : MonoBehaviour
                 else
                     mCR2D.velocity += new Vector2(g_accelerationX_origin, 0);
             }
-            if( (Input.GetKeyDown(KeyCode.Space) || buttoners[4].pressed) &&  g_movementJurisdiction[2] == true)
+            if( (Input.GetKeyDown(KeyCode.Space) || (buttoners[4].pressed && priv_jumpLocker == false) ) &&  g_movementJurisdiction[2] == true)
             {
                 //jump
                 if(g_jumpEnabledCount > 0)
                 {
                     mCR2D.velocity = new Vector2(mCR2D.velocity.x , g_VelocityJump);
                     g_jumpEnabledCount--;
+                    priv_jumpLocker = true; // lock me
                 }
             }
             else if( (Input.GetKeyDown(KeyCode.J) || buttoners[5].pressed) && nowInteracting == true)
