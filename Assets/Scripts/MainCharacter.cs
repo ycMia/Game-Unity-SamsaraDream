@@ -33,7 +33,7 @@ public class MainCharacter : MonoBehaviour
             if (gm.AddJump() == true)
                 gm.AddJump();
             gm.nowGrounding = collision.gameObject.GetComponent<Collider2D>();
-            gm.TouchGroundLittleJump();
+            //gm.TouchGroundLittleJump();
             // two times if touched ground
             // and a bit fixing
         }
