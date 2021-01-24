@@ -10,7 +10,7 @@ public class LightDimer : MonoBehaviour
     public Light2D light1;
     public Light2D light2;
     public Vector2 positionOrigin;
-
+    public float redLightHighest = 0.2f;
     void Start()
     {
 
@@ -36,7 +36,7 @@ public class LightDimer : MonoBehaviour
 
     private float Light_treat2(float input)
     {
-        if (input <= 0.2f)
+        if (input <= redLightHighest)
         {
             return input;
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class Bed_1 : MonoBehaviour
 {
     public Gamemanager gm;
-
+    
     public GameObject bed1_Prefab;
     private GameObject[] bed_1s;
     private GameObject[] tipers;
@@ -20,9 +20,7 @@ public class Bed_1 : MonoBehaviour
 
     private bool[] status = new bool[2] { false, false };
     private int[] interact = new int[2]; // [0] = pre [1] = now
-    //[Tip][20210124]只需要2个...这样设置主要...是我不相信玩家可以从一个存档点到另外一个存档点会短于几秒钟的时间
-    
-    // Start is called before the first frame update
+                                         //[Tip][20210124]只需要2个...这样设置主要...是我不相信玩家可以从一个存档点到另外一个存档点会短于几秒钟的时间
     void Start()
     {
         childrenCount = positions.Length;
