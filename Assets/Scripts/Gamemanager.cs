@@ -6,15 +6,21 @@ using System;
 
 public class Gamemanager : MonoBehaviour
 {
+    public Bed_1 bed_1_Manager;
+
+    private Vector3 respawnPosition;
+    public Vector3 RespawnPosition { set => respawnPosition = value; }
+
+    public Coin coinManager;
     public Canvas g_canvas;
-    public CameraManager cm;
+    public CameraManager CameraManager;
 
     public bool g_allowUI;
     public GameObject UIContainer;
     
     public Buttoner[] buttoners;
-    public GameObject mC; //MainCharacter
-    public Rigidbody2D mCR2D;
+    public GameObject mainCharacter; //MainCharacter
+    public Rigidbody2D mainCharacter_Rigidbody2D;
     public Collider2D nowGrounding;
 
     public float score = 0;
@@ -50,6 +56,7 @@ public class Gamemanager : MonoBehaviour
 
     void Start()
     {
+        coinManager.gameObject.SetActive(true);
         //g_canvas.scaleFactor = Math.Min(Screen.height / 1980f, Screen.width / 1080f);
         tGjF_count = tGjF_init;
         //mCR2D = mC.GetComponent<Rigidbody2D>();
@@ -62,9 +69,25 @@ public class Gamemanager : MonoBehaviour
     //    return true;
     //}
 
-    public void GameOver()
+    public void CharacterDie()
     {
-        cm.locked = true;
+        //CameraManager.locked = true;
+        //print("gameOver \\(0ω0)/");
+        //mainCharacter.SetActive(false);
+        //coinManager.Reset();
+        //bed_1_Manager.Reset();
+        mainCharacter_Rigidbody2D.velocity = new Vector2(0f, 0f);
+        mainCharacter.transform.position = respawnPosition;
+    }
+
+    public void GameStart()
+    {
+        print("gameStart _(:3 )∠_");
+        CameraManager.locked = false;
+        mainCharacter.gameObject.transform.position = new Vector2(0, 0);
+        score = 0f;
+        g_jumpEnabledCount = g_jumpEnabledLimit;
+        mainCharacter.SetActive(true);
     }
 
     public bool AddJump()
@@ -106,54 +129,55 @@ public class Gamemanager : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.A) && (g_grounded || g_movementJurisdiction[0]) == true)
             {
-                if ((mCR2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
-                    mCR2D.velocity += new Vector2(-g_restrictVelocityXAbs - mCR2D.velocity.x, 0);
+                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
                 else
-                    mCR2D.velocity += new Vector2(-g_accelerationX_origin, 0);
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_accelerationX_origin, 0);
             }
             else if (Input.GetKey(KeyCode.D) && (g_grounded || g_movementJurisdiction[1]) == true)
             {
-                if ((mCR2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
-                    mCR2D.velocity += new Vector2(g_restrictVelocityXAbs - mCR2D.velocity.x, 0);
+                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
                 else
-                    mCR2D.velocity += new Vector2(g_accelerationX_origin, 0);
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_accelerationX_origin, 0);
             }
             if (Input.GetKeyDown(KeyCode.Space) && g_movementJurisdiction[2] == true)
             {
                 if (g_jumpEnabledCount > 0)
                 {
-                    mCR2D.velocity = new Vector2(mCR2D.velocity.x, g_VelocityJump);
+                    mainCharacter_Rigidbody2D.velocity = new Vector2(mainCharacter_Rigidbody2D.velocity.x, g_VelocityJump);
                     g_jumpEnabledCount--;
                 }
                 //因为按键的GetKeyDown不会瞬发, 所以没有lock 的必要
+                
             }
             if (Input.GetKeyDown(KeyCode.J) && nowInteracting == true )
             {
-                nowInteracting.gameObject.GetComponent<Bed_1>().Interact();
+                nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
             }
         }
         else
         {
             if ((Input.GetKey(KeyCode.A)|| buttoners[0].pressed) && (g_grounded || g_movementJurisdiction[0]) == true)
             {
-                if ((mCR2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
-                    mCR2D.velocity += new Vector2(-g_restrictVelocityXAbs - mCR2D.velocity.x, 0);
+                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
                 else
-                    mCR2D.velocity += new Vector2(-g_accelerationX_origin, 0);
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_accelerationX_origin, 0);
             }
             else if((Input.GetKey(KeyCode.D) || buttoners[1].pressed) && (g_grounded || g_movementJurisdiction[1]) == true)
             {
-                if ((mCR2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
-                    mCR2D.velocity += new Vector2(g_restrictVelocityXAbs - mCR2D.velocity.x, 0);
+                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
                 else
-                    mCR2D.velocity += new Vector2(g_accelerationX_origin, 0);
+                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_accelerationX_origin, 0);
             }
             if( (Input.GetKeyDown(KeyCode.Space) || (buttoners[4].pressed && priv_jumpLocker == false) ) &&  g_movementJurisdiction[2] == true)
             {
                 //jump
                 if(g_jumpEnabledCount > 0)
                 {
-                    mCR2D.velocity = new Vector2(mCR2D.velocity.x , g_VelocityJump);
+                    mainCharacter_Rigidbody2D.velocity = new Vector2(mainCharacter_Rigidbody2D.velocity.x , g_VelocityJump);
                     g_jumpEnabledCount--;
                     priv_jumpLocker = true; // lock me
                 }
@@ -161,7 +185,7 @@ public class Gamemanager : MonoBehaviour
             else if( (Input.GetKeyDown(KeyCode.J) || buttoners[5].pressed) && nowInteracting == true)
             {
                 //interact
-                nowInteracting.gameObject.GetComponent<Bed_1>().Interact(); //[Tip][20201225]因为只有Bed_1
+                nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
             }
         }
 

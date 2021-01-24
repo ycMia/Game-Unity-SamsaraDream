@@ -20,21 +20,14 @@ public class CameraManager : MonoBehaviour
 
     void Update()
     {
-        try
-        {
-            targetPosition = mC.transform.position + new Vector3(0f, 0f, -10f);
-            distance = Vector3.Distance(targetPosition, mCCamera.gameObject.transform.position);
+        targetPosition = mC.transform.position + new Vector3(0f, 0f, -10f);
+        distance = Vector3.Distance(targetPosition, mCCamera.gameObject.transform.position);
 
-            if (!locked)
-            {
-                float t_Speed = ControlParameter_Speed * distance;
-                Vector3 t = Time.deltaTime * t_Speed * ((targetPosition - mCCamera.transform.position) / distance);
-                mCCamera.transform.position += (float.IsNaN(t.x) || float.IsNaN(t.y) || float.IsNaN(t.z)) ? new Vector3(0f, 0f, 0f) : t;
-            }
-        }
-        catch (System.Exception e)
+        if (!locked)
         {
-
+            float t_Speed = ControlParameter_Speed * distance;
+            Vector3 t = Time.deltaTime * t_Speed * ((targetPosition - mCCamera.transform.position) / distance);
+            mCCamera.transform.position += (float.IsNaN(t.x) || float.IsNaN(t.y) || float.IsNaN(t.z)) ? new Vector3(0f, 0f, 0f) : t;
         }
     }
 }

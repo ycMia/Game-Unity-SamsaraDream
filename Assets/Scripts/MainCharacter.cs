@@ -60,7 +60,6 @@ public class MainCharacter : MonoBehaviour
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
             gm.nowInteracting = collision;
-            //gm.SwitchKeyMode(false);
         }
     }
     
@@ -74,7 +73,7 @@ public class MainCharacter : MonoBehaviour
 
         if (collision.transform.gameObject.tag == "Zone_GameZone")
         {
-            gm.GameOver();
+            gm.CharacterDie();
         }
     }
 

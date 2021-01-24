@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class Coin : MonoBehaviour
     public Vector3[] positions;
     //设置Coin生成细节...
     //[Tip][20201229]这迟早给我塞进文件里 -- 地图编辑器
+    //[Tip][20210124]再次吐槽: 目前正在设置重载的细节 -- 而这个手动设置的状态没给我少添麻烦
 
     private int childrenCount;
     private float[] destroyingRemainings;
@@ -45,13 +47,16 @@ public class Coin : MonoBehaviour
     {
         if (onDestroying[i])
             return false;
-        gm.AddScore(scoreEach);
-        destroyingRemainings[i] = 0f;
-        tipers[i].SetActive(true);
-        onDestroying[i] = true;
-        originColorAlphaValues[i] = tipers[i].GetComponent<SpriteRenderer>().color.a;
-        coins[i].GetComponent<SpriteRenderer>().color = new Color(0f,0f,0f,0f);
-        return true;
+        else
+        {
+            gm.AddScore(scoreEach);
+            destroyingRemainings[i] = 0f;
+            tipers[i].SetActive(true);
+            onDestroying[i] = true;
+            originColorAlphaValues[i] = tipers[i].GetComponent<SpriteRenderer>().color.a;
+            coins[i].GetComponent<SpriteRenderer>().color = new Color(0f,0f,0f,0f);
+            return true;
+        }
     }
     
     void Update()
@@ -72,5 +77,14 @@ public class Coin : MonoBehaviour
                 tipers[i].transform.position += new Vector3(0f, 0.01f, 0f);
             }
         }
+    }
+
+    public void Reset()
+    {
+        foreach(Transform transform in gameObject.GetComponentInChildren<Transform>())
+        {
+            Destroy(transform.gameObject);
+        }
+        Start();
     }
 }
