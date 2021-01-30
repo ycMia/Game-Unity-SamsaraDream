@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Bed_1 : MonoBehaviour
 {
-    public Gamemanager gm;
+    public GameManager gm;
     
     public GameObject bed1_Prefab;
     private GameObject[] bed_1s;

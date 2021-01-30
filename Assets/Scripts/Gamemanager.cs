@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
+using enumNameSpace;
+using inputManager;
 
-public class Gamemanager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     //Interact modules Begins
     public Bed_1 bed_1_InteractionManager;
@@ -14,6 +16,7 @@ public class Gamemanager : MonoBehaviour
     private Vector3 respawnPosition;
     public Vector3 RespawnPosition { set => respawnPosition = value; }
 
+    public ImputManager imputManager;
     public Canvas g_canvas;
     public CameraManager CameraManager;
 
@@ -57,8 +60,7 @@ public class Gamemanager : MonoBehaviour
     private bool addDragflag = false;//false == addable ; true == added
     public float drag_decline_set = 1.6f; //second
     private  float drag_timeCounter = 0f;
-
-    private bool priv_jumpLocker = false;
+    
     public float ladderSpeed = 3f;
 
     //lock == true ; unlock == false
@@ -70,7 +72,7 @@ public class Gamemanager : MonoBehaviour
         mainCharacter_Rigidbody2D = mainCharacter.GetComponent<Rigidbody2D>();
         UIContainer.SetActive(g_allowUI);
     }
-    
+
     public void GameOver()
     {
         print("gameOver \\(0ω0)/");
@@ -122,17 +124,22 @@ public class Gamemanager : MonoBehaviour
         textline.text = tstr;
     }
 
+    public void MainCharacterJump()
+    {
+        if (g_jumpEnabledCount > 0)
+        {
+            mainCharacter_Rigidbody2D.velocity = new Vector2(mainCharacter_Rigidbody2D.velocity.x, g_VelocityJump);
+            g_jumpEnabledCount--;
+        }
+    }
+
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Insert))
         {
             GameOver();
         }
-
-        if(buttoners[4].pressed == false)
-        {
-            priv_jumpLocker = false;
-        }
+        
         if (score>=8)
         {
             Print_Text("Score:" + (int)score + "You Win!!");
@@ -141,170 +148,93 @@ public class Gamemanager : MonoBehaviour
         {
             Print_Text("Score:" + (int)score);
         }
-
-
-        if (!g_allowUI)
+        
+        //----movement----
+        if (imputManager.status[(int)EnumStatus.Left] && (g_grounded || g_movementJurisdiction[0]) == true)
         {
-            if (Input.GetKey(KeyCode.A) && (g_grounded || g_movementJurisdiction[0]) == true)
-            {
-                laddermode = false;
-                addDragflag = false;
-                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
-                else
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_accelerationX_origin, 0);
-            }
-            else if (Input.GetKey(KeyCode.D) && (g_grounded || g_movementJurisdiction[1]) == true)
-            {
-                laddermode = false;
-                addDragflag = false;
-                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
-                else
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_accelerationX_origin, 0);
-            }
+            laddermode = false;
+            addDragflag = false;
+            if ((mainCharacter_Rigidbody2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
+                mainCharacter_Rigidbody2D.velocity += new Vector2(-g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
             else
-            {
-                addDragflag = true;
-            }
-
-
-            if (isLaddering == true)//Laddering
-            {
-                //[Tip][20210125]应接上动画切换...
-                if (Input.GetKey(KeyCode.W))
-                {
-                    laddermode = true;
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(0f, +ladderSpeed);
-                    mainCharacter_Rigidbody2D.gravityScale = 0f;
-                }
-                else if (Input.GetKey(KeyCode.S))
-                {
-                    laddermode = true;
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(0f, -ladderSpeed);
-                    mainCharacter_Rigidbody2D.gravityScale = 0f;
-                }
-                else
-                {
-                    if (laddermode)
-                    {
-                        mainCharacter_Rigidbody2D.velocity = new Vector2(0f, 0f);
-                        mainCharacter_Rigidbody2D.gravityScale = 0f;
-                    }
-                    else
-                    {
-                        mainCharacter_Rigidbody2D.gravityScale = 1f;
-                    }
-                }
-            }
-            else
-            {
-                mainCharacter_Rigidbody2D.gravityScale = 1f;
-            }
-
-
-            if (Input.GetKeyDown(KeyCode.Space) && g_movementJurisdiction[2] == true)
-            {
-                //jump
-                laddermode = false;
-                if (g_jumpEnabledCount > 0)
-                {
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(mainCharacter_Rigidbody2D.velocity.x, g_VelocityJump);
-                    g_jumpEnabledCount--;
-                }
-                //因为键盘的GetKeyDown不会瞬发多次, 所以没有lock 的必要
-                
-            }
-            if (Input.GetKeyDown(KeyCode.J) && nowInteracting == true )
-            {
-                nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
-            }
+                mainCharacter_Rigidbody2D.velocity += new Vector2(-g_accelerationX_origin, 0);
         }
-
-
-        ////---------////
+        else if(imputManager.status[(int)EnumStatus.Right] && (g_grounded || g_movementJurisdiction[1]) == true)
+        {
+            laddermode = false;
+            addDragflag = false;
+            if ((mainCharacter_Rigidbody2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
+                mainCharacter_Rigidbody2D.velocity += new Vector2(g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
+            else
+                mainCharacter_Rigidbody2D.velocity += new Vector2(g_accelerationX_origin, 0);
+        }
         else
         {
-            if ((Input.GetKey(KeyCode.A)|| buttoners[0].pressed) && (g_grounded || g_movementJurisdiction[0]) == true)
+            addDragflag = true;
+        }
+
+        if (imputManager.status[(int)EnumStatus.Jump])
+        {
+            MainCharacterJump();
+            imputManager.status[(int)EnumStatus.Jump] = false;
+        }
+
+        if (isLaddering == true) //Laddering_Collided
+        {
+            mainCharacter_Rigidbody2D.gravityScale = 0f;
+            //[Tip][20210125]应接上动画切换...
+            if (imputManager.status[(int)EnumStatus.Up])
             {
-                laddermode = false;
-                addDragflag = false;
-                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(-g_accelerationX_origin, 0)).x <= -g_restrictVelocityXAbs)
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
-                else
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(-g_accelerationX_origin, 0);
+                laddermode = true;
+                mainCharacter_Rigidbody2D.velocity = new Vector2(0f, +ladderSpeed);
             }
-            else if((Input.GetKey(KeyCode.D) || buttoners[1].pressed) && (g_grounded || g_movementJurisdiction[1]) == true)
+            else if (imputManager.status[(int)EnumStatus.Down])
             {
-                laddermode = false;
-                addDragflag = false;
-                if ((mainCharacter_Rigidbody2D.velocity + new Vector2(g_accelerationX_origin, 0)).x >= g_restrictVelocityXAbs)
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_restrictVelocityXAbs - mainCharacter_Rigidbody2D.velocity.x, 0);
-                else
-                    mainCharacter_Rigidbody2D.velocity += new Vector2(g_accelerationX_origin, 0);
+                laddermode = true;
+                mainCharacter_Rigidbody2D.velocity = new Vector2(0f, -ladderSpeed);
             }
+
             else
             {
-                addDragflag = true;
-            }
-            
-            if (isLaddering == true) //Laddering
-            {
-                //[Tip][20210125]应接上动画切换...
-                if (Input.GetKey(KeyCode.W) || buttoners[2].pressed)
+                if(laddermode)
                 {
-                    laddermode = true;
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(0f, +ladderSpeed);
-                    mainCharacter_Rigidbody2D.gravityScale = 0f;
-                }
-                else if (Input.GetKey(KeyCode.S) || buttoners[3].pressed)
-                {
-                    laddermode = true;
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(0f, -ladderSpeed);
-                    mainCharacter_Rigidbody2D.gravityScale = 0f;
+                    if (imputManager.status[(int)EnumStatus.Left])
+                    {
+                        laddermode = true;
+                        mainCharacter_Rigidbody2D.velocity = new Vector2(-ladderSpeed, mainCharacter_Rigidbody2D.velocity.y);
+                    }
+                    else if (imputManager.status[(int)EnumStatus.Right])
+                    {
+                        laddermode = true;
+                        mainCharacter_Rigidbody2D.velocity = new Vector2(ladderSpeed, mainCharacter_Rigidbody2D.velocity.y);
+                    }
+
+                    mainCharacter_Rigidbody2D.velocity = new Vector2(0f, 0f);
                 }
                 else
                 {
-                    if(laddermode)
-                    {
-                        mainCharacter_Rigidbody2D.velocity = new Vector2(0f, 0f);
-                        mainCharacter_Rigidbody2D.gravityScale = 0f;
-                    }
-                    else
-                    {
-                        mainCharacter_Rigidbody2D.gravityScale = 1f;
-                    }
+                    mainCharacter_Rigidbody2D.gravityScale = 1f;
                 }
-            }
-            else
-            {
-                mainCharacter_Rigidbody2D.gravityScale = 1f;
-            }
-            
-            if ( (Input.GetKeyDown(KeyCode.Space) || (buttoners[4].pressed && priv_jumpLocker == false) ) &&  g_movementJurisdiction[2] == true)
-            {
-                //jump
-                laddermode = false;
-                if (g_jumpEnabledCount > 0)
-                {
-                    mainCharacter_Rigidbody2D.velocity = new Vector2(mainCharacter_Rigidbody2D.velocity.x , g_VelocityJump);
-                    g_jumpEnabledCount--;
-                    priv_jumpLocker = true; // lock me
-                }
-            }
-            else if( (Input.GetKeyDown(KeyCode.J) || buttoners[5].pressed) && nowInteracting == true)
-            {
-                //interact
-                nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
             }
         }
-        
-        
-        drag_timeCounter = (addDragflag) ?  (drag_timeCounter + Time.deltaTime): 0f  ; //[Tip][20210125]但愿你能看懂...这是个奇怪的衰减
-        mainCharacter_Rigidbody2D.drag = drag_set * (1f-(drag_timeCounter / drag_decline_set)) ; // Linear Drag
+        else
+        {
+            mainCharacter_Rigidbody2D.gravityScale = 1f;
+        }
+        //----endof movement----
 
-        buttoners[5].gameObject.GetComponent<Button>().interactable = nowInteracting ? true : false;
-        buttoners[2].gameObject.GetComponent<Button>().interactable =buttoners[3].gameObject.GetComponent<Button>().interactable = isLaddering ? true : false;
+        //----movement----
+        if ( imputManager.status[(int)EnumStatus.Interact] && nowInteracting == true)
+        {
+            //interact
+            nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
+        }
+        
+        drag_timeCounter = (addDragflag) ?  (drag_timeCounter + Time.deltaTime): 0f ;
+        mainCharacter_Rigidbody2D.drag = (drag_set * (1f-(drag_timeCounter / drag_decline_set))<=0f) ? 0f : drag_set * (1f - (drag_timeCounter / drag_decline_set));
+
+        buttoners[(int)EnumStatus.Interact].gameObject.GetComponent<Button>().interactable = nowInteracting ? true : false;
+        buttoners[(int)EnumStatus.Up].gameObject.GetComponent<Button>().interactable =buttoners[(int)EnumStatus.Up].gameObject.GetComponent<Button>().interactable = isLaddering ? true : false;
 
     }
 

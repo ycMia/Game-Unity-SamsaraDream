@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public class Buttoner : MonoBehaviour
 {
     public bool pressed;
-    
+
     private void AddTriggersListener(GameObject obj, EventTriggerType eventID, UnityAction<BaseEventData> action)
     {
         EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -31,7 +31,7 @@ public class Buttoner : MonoBehaviour
         trigger.triggers.Add(entry);
     }
 
-    void Awake()
+    private void Awake()
     {
         AddTriggersListener(gameObject, EventTriggerType.PointerDown, MPress);
         AddTriggersListener(gameObject, EventTriggerType.PointerUp, MUnPress);

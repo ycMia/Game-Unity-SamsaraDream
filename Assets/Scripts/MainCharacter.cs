@@ -18,7 +18,7 @@ using UnityEngine;
 
 public class MainCharacter : MonoBehaviour
 {
-    public Gamemanager gm;
+    public GameManager gm;
 
     private Stack<Collider2D> queLadderCollider2D = new Stack<Collider2D>();
 

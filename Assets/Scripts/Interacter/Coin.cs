@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    public Gamemanager gm;  //[Tip][20201225]需要手动挂载...
+    public GameManager gm;  //[Tip][20201225]需要手动挂载...
 
     public GameObject coin_Prefab;
     private GameObject[] coins;
