@@ -1,8 +1,4 @@
-﻿// ---------------------------【2D 描边效果】---------------------------
-// create by 长生但酒狂
-// src = https://zhuanlan.zhihu.com/p/133439889
-
-Shader "Custom/shader001"
+﻿Shader "Custom/shader001"
 {
 	Properties
 	{
@@ -10,7 +6,10 @@ Shader "Custom/shader001"
 		_MaskTex("Mask", 2D) = "white" {}
 		_NormalMap("Normal Map", 2D) = "bump" {}
 
-		_lineWidth("lineWidth",Range(0,100)) = 1
+		_AspectRatio("AspectRatio",float) =1 //x:y
+		_PixelPreUnit("PixelPreUnit",float) =1 //x:y
+		_lineWidth("lineWidth",float) = 1
+		
 		_lineColor("lineColor",Color) = (1,1,1,1)
 
 		// Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
@@ -71,6 +70,8 @@ Shader "Custom/shader001"
 			half4 _MainTex_ST;
 			half4 _NormalMap_ST;
 
+			float _AspectRatio;
+			float _PixelPreUnit;
 			float _lineWidth;
 			float4 _lineColor;
 
@@ -122,106 +123,122 @@ Shader "Custom/shader001"
 			//	col.rgb = lerp(_lineColor,col.rgb,w);
 			//	return col;
 			//}
+			float2 mygenf2_float2(in float pixelPerUnit,in int2 a)
+			{
+				return float2(a.x / pixelPerUnit *_lineWidth * _AspectRatio , a.y / pixelPerUnit *_lineWidth);
+			};
 
 			half4 CombinedShapeLightFragment(Varyings i) : SV_Target
 			{
-				float2 upleft_uv = i.uv + TRANSFORM_TEX(float2(-0.02*_lineWidth, 0.02 *_lineWidth / 2.5),_MainTex);
-				float2 up_uv = i.uv + TRANSFORM_TEX(float2(0, 0.02 *_lineWidth / 2.5),_MainTex);
-				float2 upright_uv = i.uv + TRANSFORM_TEX(float2(+0.02*_lineWidth, 0.02 *_lineWidth / 2.5), _MainTex);
+				half4 main;
+				half4 mask;
+				if (SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a == 0 )
+				{	
+					// float2 upleft_uv = i.uv + 	TRANSFORM_TEX(float2(-0.02*_lineWidth, 0.02 *_lineWidth)	,_MainTex);
+					// float2 up_uv = i.uv + 		TRANSFORM_TEX(float2(0, 0.02				*_lineWidth)	,_MainTex);
+					// float2 upright_uv = i.uv + 	TRANSFORM_TEX(float2(+0.02*_lineWidth, 0.02 *_lineWidth)	, _MainTex);
 				
-				float2 downleft_uv = i.uv + TRANSFORM_TEX(float2(-0.02*_lineWidth, -0.02 *_lineWidth / 2.5), _MainTex);
-				float2 down_uv = i.uv + TRANSFORM_TEX(float2(0, -0.02 *_lineWidth / 2.5), _MainTex);
-				float2 downright_uv = i.uv + TRANSFORM_TEX(float2(0.02*_lineWidth, -0.02 *_lineWidth / 2.5), _MainTex);
+					// float2 downleft_uv = i.uv + TRANSFORM_TEX(float2(-0.02*_lineWidth, -0.02 *_lineWidth)	, _MainTex);
+					// float2 down_uv = i.uv + 	TRANSFORM_TEX(float2(0, -0.02 				*_lineWidth)	, _MainTex);
+					// float2 downright_uv = i.uv +TRANSFORM_TEX(float2(0.02*_lineWidth, -0.02 *_lineWidth)	, _MainTex);
 
-				float2 left_uv = i.uv + TRANSFORM_TEX(float2(0.02 *_lineWidth, 0), _MainTex);
-				float2 right_uv = i.uv + TRANSFORM_TEX(float2(-0.02*_lineWidth, 0), _MainTex);
+					// float2 left_uv = i.uv + TRANSFORM_TEX(float2(0.02 *_lineWidth, 0), _MainTex);
+					// float2 right_uv = i.uv + TRANSFORM_TEX(float2(-0.02*_lineWidth, 0), _MainTex);
+				//
+					float2 upleft_uv = i.uv + 	TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(-1,1))	,_MainTex);
+					float2 up_uv = i.uv + 		TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(0,1))	,_MainTex);
+					float2 upright_uv = i.uv + 	TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(1,1))	, _MainTex);
 				
-				float w = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, upleft_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, up_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, upright_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, downleft_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, down_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, downright_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, left_uv).a +
-					SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, right_uv).a;
+					float2 downleft_uv = i.uv + TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(-1,-1))	, _MainTex);
+					float2 down_uv = i.uv + 	TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(0,-1))	, _MainTex);
+					float2 downright_uv = i.uv +TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(1,-1))	, _MainTex);
 
-				half4 main = 0;
+					float2 left_uv = i.uv + TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(-1,0)), _MainTex);
+					float2 right_uv = i.uv + TRANSFORM_TEX(mygenf2_float2(_PixelPreUnit,int2(1,0)), _MainTex);
 
-				if ( ( w == 1 || w == 2 ||  w == 3 || w == 4 || w == 5 || w == 6 || w == 7 || w==8 ) && SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a == 0) {
-					//main = lerp(_lineColor, i.color, w);
-					main = _lineColor;
+					float w = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, upleft_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, up_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, upright_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, downleft_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, down_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, downright_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, left_uv).a +
+						SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, right_uv).a;
+					if ((w>=1 && w<=8) )
+					{
+						main = _lineColor;
+						mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
+						return CombinedShapeLightShared(main, mask, i.lightingUV);
+					}
 				}
-				else {
-					main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
-				}
-
-				half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
-
+				
+				main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+				mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
 				half4 rev = CombinedShapeLightShared(main, mask, i.lightingUV);
-				
 				return rev;
+
 			}
 			ENDHLSL
 		}
 
-		//Pass
-		//{
-		//	Tags { "LightMode" = "NormalsRendering"}
-		//	HLSLPROGRAM
-		//	#pragma prefer_hlslcc gles
-		//	#pragma vertex NormalsRenderingVertex
-		//	#pragma fragment NormalsRenderingFragment
+		Pass
+		{
+			Tags { "LightMode" = "NormalsRendering"}
+			HLSLPROGRAM
+			#pragma prefer_hlslcc gles
+			#pragma vertex NormalsRenderingVertex
+			#pragma fragment NormalsRenderingFragment
 
-		//	struct Attributes
-		//	{
-		//		float3 positionOS   : POSITION;
-		//		float4 color		: COLOR;
-		//		float2 uv			: TEXCOORD0;
-		//		float4 tangent      : TANGENT;
-		//	};
+			struct Attributes
+			{
+				float3 positionOS   : POSITION;
+				float4 color		: COLOR;
+				float2 uv			: TEXCOORD0;
+				float4 tangent      : TANGENT;
+			};
 
-		//	struct Varyings
-		//	{
-		//		float4  positionCS		: SV_POSITION;
-		//		float4  color			: COLOR;
-		//		float2	uv				: TEXCOORD0;
-		//		float3  normalWS		: TEXCOORD1;
-		//		float3  tangentWS		: TEXCOORD2;
-		//		float3  bitangentWS		: TEXCOORD3;
-		//	};
+			struct Varyings
+			{
+				float4  positionCS		: SV_POSITION;
+				float4  color			: COLOR;
+				float2	uv				: TEXCOORD0;
+				float3  normalWS		: TEXCOORD1;
+				float3  tangentWS		: TEXCOORD2;
+				float3  bitangentWS		: TEXCOORD3;
+			};
 
-		//	TEXTURE2D(_MainTex);
-		//	SAMPLER(sampler_MainTex);
-		//	TEXTURE2D(_NormalMap);
-		//	SAMPLER(sampler_NormalMap);
-		//	float4 _NormalMap_ST;  // Is this the right way to do this?
+			TEXTURE2D(_MainTex);
+			SAMPLER(sampler_MainTex);
+			TEXTURE2D(_NormalMap);
+			SAMPLER(sampler_NormalMap);
+			float4 _NormalMap_ST;  // Is this the right way to do this?
 
-		//	Varyings NormalsRenderingVertex(Attributes attributes)
-		//	{
-		//		Varyings o = (Varyings)0;
+			Varyings NormalsRenderingVertex(Attributes attributes)
+			{
+				Varyings o = (Varyings)0;
 
-		//		o.positionCS = TransformObjectToHClip(attributes.positionOS);
-		//		o.uv = TRANSFORM_TEX(attributes.uv, _NormalMap);
-		//		o.uv = attributes.uv;
-		//		o.color = attributes.color;
-		//		o.normalWS = TransformObjectToWorldDir(float3(0, 0, -1));
-		//		o.tangentWS = TransformObjectToWorldDir(attributes.tangent.xyz);
-		//		o.bitangentWS = cross(o.normalWS, o.tangentWS) * attributes.tangent.w;
-		//		return o;
-		//	}
+				o.positionCS = TransformObjectToHClip(attributes.positionOS);
+				o.uv = TRANSFORM_TEX(attributes.uv, _NormalMap);
+				o.uv = attributes.uv;
+				o.color = attributes.color;
+				o.normalWS = TransformObjectToWorldDir(float3(0, 0, -1));
+				o.tangentWS = TransformObjectToWorldDir(attributes.tangent.xyz);
+				o.bitangentWS = cross(o.normalWS, o.tangentWS) * attributes.tangent.w;
+				return o;
+			}
 
-		//	#include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/NormalsRenderingShared.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/NormalsRenderingShared.hlsl"
 
-		//	float4 NormalsRenderingFragment(Varyings i) : SV_Target
-		//	{
-		//		float4 mainTex = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
-		//		float3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv));
-		//		return NormalsRenderingShared(mainTex, normalTS, i.tangentWS.xyz, i.bitangentWS.xyz, i.normalWS.xyz);
-		//		return 0;
-		//	}
-		//	ENDHLSL
-		//}
-		/*Pass
+			float4 NormalsRenderingFragment(Varyings i) : SV_Target
+			{
+				float4 mainTex = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+				float3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv));
+				return NormalsRenderingShared(mainTex, normalTS, i.tangentWS.xyz, i.bitangentWS.xyz, i.normalWS.xyz);
+				return 0;
+			}
+			ENDHLSL
+		}
+		Pass
 		{
 			Tags { "LightMode" = "UniversalForward" "Queue" = "Transparent" "RenderType" = "Transparent"}
 
@@ -266,7 +283,7 @@ Shader "Custom/shader001"
 				return mainTex;
 			}
 			ENDHLSL
-		}*/
+		}
 	}
 
 	Fallback "Sprites/Default"
