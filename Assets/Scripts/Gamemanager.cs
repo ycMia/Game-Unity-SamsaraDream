@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public float score = 0;
     public Text textline;
 
-    public Collider2D nowInteracting;
+    public Collider2D nowInteract_possibly;
     public bool isLaddering;
     private bool laddermode = false;
     public int g_jumpEnabledCount = 2;
@@ -133,13 +133,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void De_nowInteract_possibly()
+    {
+        nowInteract_possibly.transform.parent.gameObject.GetComponent<Bed_1>().SetHighlight(int.Parse(nowInteract_possibly.gameObject.name), false);
+        nowInteract_possibly = null;
+    }
+
     private void Update()
     {
+        //----PlayGround----
         if(Input.GetKeyDown(KeyCode.Insert))
         {
             GameOver();
         }
         
+        //----Text----
         if (score>=8)
         {
             Print_Text("Score:" + (int)score + "You Win!!");
@@ -222,20 +230,26 @@ public class GameManager : MonoBehaviour
             mainCharacter_Rigidbody2D.gravityScale = 1f;
         }
         //----endof movement----
-
-        //----movement----
-        if ( imputManager.status[(int)EnumStatus.Interact] && nowInteracting == true)
+        
+        //----interact----
+        if(nowInteract_possibly == true)
         {
-            //interact
-            nowInteracting.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteracting.gameObject.name));
+            if (imputManager.status[(int)EnumStatus.Interact] )
+            {
+                nowInteract_possibly.transform.parent.gameObject.GetComponent<Bed_1>().Interact(int.Parse(nowInteract_possibly.gameObject.name));
+            }
+        }
+        else
+        {
+
         }
         
         drag_timeCounter = (addDragflag) ?  (drag_timeCounter + Time.deltaTime): 0f ;
         mainCharacter_Rigidbody2D.drag = (drag_set * (1f-(drag_timeCounter / drag_decline_set))<=0f) ? 0f : drag_set * (1f - (drag_timeCounter / drag_decline_set));
 
-        buttoners[(int)EnumStatus.Interact].gameObject.GetComponent<Button>().interactable = nowInteracting ? true : false;
-        buttoners[(int)EnumStatus.Up].gameObject.GetComponent<Button>().interactable =buttoners[(int)EnumStatus.Up].gameObject.GetComponent<Button>().interactable = isLaddering ? true : false;
 
+        //----UI----
+        buttoners[(int)EnumStatus.Interact].gameObject.GetComponent<Button>().interactable = nowInteract_possibly ? true : false;
+        buttoners[(int)EnumStatus.Up].gameObject.GetComponent<Button>().interactable =buttoners[(int)EnumStatus.Down].gameObject.GetComponent<Button>().interactable = isLaddering ? true : false;
     }
-
 }

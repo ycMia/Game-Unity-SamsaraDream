@@ -483,6 +483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gm: {fileID: 1271935011}
+  shstor: {fileID: 0}
   bed1_Prefab: {fileID: 8442269155884175776, guid: 2d5c48ae5d0c7d9409537e7541797b6a, type: 3}
   positions:
   - {x: -4, y: -1.3, z: 0}
@@ -876,6 +877,7 @@ GameObject:
   m_Component:
   - component: {fileID: 228396149}
   - component: {fileID: 228396150}
+  - component: {fileID: 228396151}
   m_Layer: 0
   m_Name: GameWorld
   m_TagString: Zone_GameZone
@@ -928,6 +930,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 160, y: 40}
   m_EdgeRadius: 0
+--- !u!114 &228396151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228396148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acbf3a7de546e64abd1010f64a5a6ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shaders: []
 --- !u!1 &251399394
 GameObject:
   m_ObjectHideFlags: 0
@@ -8172,7 +8187,7 @@ MonoBehaviour:
   imputManager: {fileID: 1271935014}
   g_canvas: {fileID: 364231107}
   CameraManager: {fileID: 519420030}
-  g_allowUI: 0
+  g_allowUI: 1
   UIContainer: {fileID: 1633964365}
   buttoners:
   - {fileID: 1472504114}
@@ -8185,7 +8200,7 @@ MonoBehaviour:
   nowGrounding: {fileID: 0}
   score: 0
   textline: {fileID: 1215611410}
-  nowInteracting: {fileID: 0}
+  nowInteract_possibly: {fileID: 0}
   isLaddering: 0
   g_jumpEnabledCount: 1
   g_jumpEnabledLimit: 2
@@ -15167,7 +15182,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 973e69a8f54937242ae1d136079b0a8e, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

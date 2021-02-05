@@ -62,7 +62,9 @@ public class MainCharacter : MonoBehaviour
 
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
-            gm.nowInteracting = collision;
+            gm.nowInteract_possibly = collision;
+            //仅触发高亮, 取消高亮在gm.De_nowInteract_possibly()方法中
+            collision.transform.parent.gameObject.GetComponent<Bed_1>().SetHighlight(int.Parse(collision.gameObject.name), true);
         }
 
         if (collision.transform.gameObject.tag == "Ladder")
@@ -75,7 +77,9 @@ public class MainCharacter : MonoBehaviour
     {
         if (collision.transform.gameObject.tag == "Interactive_Bed")
         {
-            gm.nowInteracting = null; //[Tip][20201225]这里逻辑可能有问题
+            gm.De_nowInteract_possibly();//[Tip][20210205]注意! 按照这里的整套逻辑, 只能同时Interact一个可InterAct的对象
+            
+            //gm.nowInteract_possibly = null; //[Tip][20201225]这里逻辑可能有问题
             //gm.SwitchKeyMode(true);
         }
 

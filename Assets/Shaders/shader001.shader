@@ -7,9 +7,8 @@
 		_NormalMap("Normal Map", 2D) = "bump" {}
 
 		_AspectRatio("AspectRatio",float) =1 //x:y
-		_PixelPreUnit("PixelPreUnit",float) =1 //x:y
+		_PixelPreUnit("PixelPreUnit",float) =1
 		_lineWidth("lineWidth",float) = 1
-		
 		_lineColor("lineColor",Color) = (1,1,1,1)
 
 		// Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.

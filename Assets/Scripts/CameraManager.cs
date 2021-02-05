@@ -10,7 +10,7 @@ public class CameraManager : MonoBehaviour
 
     public bool locked = false;
 
-    private Vector3 targetPosition; //adapted Position ( restricted to [z == -10f] )
+    public Vector3 targetPosition; //adapted Position ( restricted to [z == -10f] )
     private float distance;
     
     void Start()

@@ -100,18 +100,18 @@ namespace inputManager
                 }
 
                 //Jump
-                if (buttoners[(int)EnumStatus.Jump] && priv_jumpLocker == false)
+                if (buttoners[(int)EnumStatus.Jump].pressed && priv_jumpLocker == false)
                 {
                     priv_jumpLocker = true;
                     status[(int)EnumStatus.Jump] = true;
                 }
-                else if (!buttoners[(int)EnumStatus.Jump] && priv_jumpLocker == true)
+                else if (!buttoners[(int)EnumStatus.Jump].pressed && priv_jumpLocker == true)
                 {
                     priv_jumpLocker = false;
                 }
 
                 //Interact
-                status[(int)EnumStatus.Interact] = buttoners[(int)EnumStatus.Interact];
+                status[(int)EnumStatus.Interact] = buttoners[(int)EnumStatus.Interact].pressed;
             }
         }
     }
